@@ -611,7 +611,11 @@
                 <!-- 自動車 -->
                 <div class="section">
                     <h2 class="section-title">🚙 自動車購入</h2>
-                    <div class="input-group form-group">
+                    <div class="form-group" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="carOwnership" value="buy" checked onchange="toggleCar()"> 購入する</label>
+                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="carOwnership" value="none" onchange="toggleCar()"> 買わない</label>
+                    </div>
+                    <div id="carBuyInputs" class="input-group form-group">
                         <div style="flex: 1;">
                             <label>初回購入年齢</label>
                             <input type="number" id="carAge" class="form-control" value="32">
@@ -760,6 +764,11 @@
             document.getElementById('housingRentInputs').style.display = !isBuy ? 'block' : 'none';
         }
 
+        function toggleCar() {
+            const isBuy = document.querySelector('input[name="carOwnership"]:checked').value === 'buy';
+            document.getElementById('carBuyInputs').style.display = isBuy ? 'flex' : 'none';
+        }
+
         const EDU_COSTS = {
             es: { years: 6, startAge: 6, public: 35, private: 160 },
             jhs: { years: 3, startAge: 12, public: 50, private: 140 },
@@ -872,6 +881,7 @@
             const houseInterest = parseFloat(document.getElementById('houseInterest').value) || 0;
             const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 0;
 
+            const carOwnership = document.querySelector('input[name="carOwnership"]:checked').value;
             const carAge = parseInt(document.getElementById('carAge').value) || 0;
             const carBudget = parseFloat(document.getElementById('carBudget').value) || 0;
             const carCycle = parseInt(document.getElementById('carCycle').value) || 1; // 0除算防止
@@ -910,6 +920,8 @@
             const labelsAge = [];
             const dataCash = [];
             const dataInvest = [];
+            const dataTotal = [];
+            const dataEvents = [];
 
             // 統計用変数
             let totalEduCost = 0;
@@ -950,6 +962,7 @@
             for (let age = currentAge; age <= endAge; age++) {
                 
                 const yearsPassed = age - currentAge;
+                let currentEvents = [];
 
                 // --- 収入と基本生活費 ---
                 // 昇給を反映（退職まで）
@@ -963,6 +976,9 @@
                 // 退職金設定
                 if (age === retirementAge && retirementAllowance > 0) {
                     cash += retirementAllowance;
+                    currentEvents.push("退職・退職金受取");
+                } else if (age === retirementAge) {
+                    currentEvents.push("退職");
                 }
 
                 // 副収入
@@ -979,17 +995,24 @@
                 // --- 現在の借入れ返済 ---
                 if (yearsPassed < currentDebtYears && currentDebtAmount > 0) {
                     cash -= annualDebtPayment;
+                    if (yearsPassed === currentDebtYears - 1) {
+                        currentEvents.push("現在の借入れ完済");
+                    }
                 }
 
                 // --- 住宅費用 ---
                 if (housingType === 'buy') {
                     if (age === houseAge && houseBudget > 0) {
                         cash -= houseDownPayment;
+                        currentEvents.push("住宅購入(頭金支払)");
                     }
                     if (age >= houseAge && age < houseAge + houseYears && houseBudget > 0) {
                         const annualLoan = monthlyLoanPayment * 12;
                         cash -= annualLoan;
                         totalLoanPaid += annualLoan;
+                    }
+                    if (age === houseAge + houseYears - 1 && houseBudget > 0) {
+                        currentEvents.push("住宅ローン完済");
                     }
                 } else if (housingType === 'rent') {
                     const annualRent = monthlyRent * 12;
@@ -998,9 +1021,17 @@
                 }
 
                 // --- 教育費 ---
-                children.forEach(child => {
+                children.forEach((child, idx) => {
                     const childAgeNow = child.currentAge + (age - currentAge);
                     let annualEduCost = 0;
+                    
+                    if (childAgeNow === EDU_COSTS.es.startAge) {
+                        currentEvents.push(`第${idx+1}子 小学校入学`);
+                    } else if (childAgeNow === EDU_COSTS.jhs.startAge) {
+                        currentEvents.push(`第${idx+1}子 中学校入学`);
+                    } else if (childAgeNow === EDU_COSTS.hs.startAge) {
+                        currentEvents.push(`第${idx+1}子 高校入学`);
+                    }
                     
                     if (childAgeNow >= EDU_COSTS.es.startAge && childAgeNow < EDU_COSTS.es.startAge + EDU_COSTS.es.years) {
                         annualEduCost = EDU_COSTS.es[child.es];
@@ -1012,6 +1043,7 @@
                         const uniData = EDU_COSTS.uni[child.uni];
                         if (childAgeNow === EDU_COSTS.uni.startAge) {
                             annualEduCost += uniData.enrollment; // 入学年に入学金を合算
+                            currentEvents.push(`第${idx+1}子 大学入学`);
                         }
                         if (childAgeNow >= EDU_COSTS.uni.startAge && childAgeNow < EDU_COSTS.uni.startAge + uniData.years) {
                             annualEduCost += uniData.costPerYear;
@@ -1023,21 +1055,29 @@
                 });
 
                 // --- 自動車買替 ---
-                if (age >= carAge && carBudget > 0) {
+                if (carOwnership === 'buy' && age >= carAge && carBudget > 0) {
                     if ((age - carAge) % carCycle === 0) {
                         cash -= carBudget;
+                        currentEvents.push("自動車購入・買替");
                     }
                 }
 
                 // --- 投資 ---
                 let currentMonthlyInvest = 0;
                 let activeYieldRates = [];
-                investments.forEach(inv => {
+                let isInvestStart = false;
+                investments.forEach((inv, idx) => {
                     if (age >= inv.start && age <= inv.end) {
                         currentMonthlyInvest += inv.tsumitate + inv.growth;
                         activeYieldRates.push(inv.yieldRate);
                     }
+                    if (age === inv.start) {
+                        isInvestStart = true;
+                    }
                 });
+                if (isInvestStart && currentMonthlyInvest > 0) {
+                    currentEvents.push("投資開始");
+                }
                 
                 // Average yield for the period if multiple, else 0
                 const currentYield = activeYieldRates.length > 0 
@@ -1058,6 +1098,8 @@
                 // プロットしやすいように負の現金はそのまま許容（グラフが下に伸びる）
                 dataCash.push(Math.round(cash));
                 dataInvest.push(Math.round(invest));
+                dataTotal.push(Math.round(cash + invest));
+                dataEvents.push(currentEvents.join(" / "));
 
                 // 65歳時点スナップショット
                 if (age === 65) {
@@ -1120,13 +1162,13 @@
             
             document.getElementById('eduBreakdown').innerHTML = eduLogHTML;
 
-            drawChart(labelsAge, dataCash, dataInvest);
+            drawChart(labelsAge, dataCash, dataInvest, dataTotal, dataEvents);
         }
 
         // ==========================================
         // 5. Chart.js 描画プロセス
         // ==========================================
-        function drawChart(labels, cashData, investData) {
+        function drawChart(labels, cashData, investData, totalData, eventsData) {
             const ctx = document.getElementById('assetChart').getContext('2d');
             
             // 既存のチャートがあれば破棄
@@ -1140,6 +1182,23 @@
                     labels: labels,
                     datasets: [
                         {
+                            label: '総資産 (万円)',
+                            data: totalData,
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            borderWidth: 3,
+                            // イベントがある年だけポイントを強調する
+                            pointRadius: context => {
+                                const index = context.dataIndex;
+                                return (eventsData && eventsData[index]) ? 6 : 0;
+                            },
+                            pointBackgroundColor: '#f59e0b',
+                            pointHoverRadius: 8,
+                            tension: 0.1,
+                            stacked: false // 総資産線はスタックさせない
+                        },
+                        {
                             label: '投資資産 (万円)',
                             data: investData,
                             borderColor: '#10b981',
@@ -1148,19 +1207,20 @@
                             borderWidth: 2,
                             pointRadius: 0,
                             pointHoverRadius: 6,
-                            tension: 0.1
+                            tension: 0.1,
+                            stacked: true
                         },
                         {
                             label: '現金残高 (万円)',
                             data: cashData,
                             borderColor: '#3b82f6',
                             backgroundColor: 'rgba(59, 130, 246, 0.4)',
-                            // Stacked Area (積み上げ) 実現のために fill 設定を指定
                             fill: true, 
                             borderWidth: 2,
                             pointRadius: 0,
                             pointHoverRadius: 6,
-                            tension: 0.1
+                            tension: 0.1,
+                            stacked: true
                         }
                     ]
                 },
@@ -1191,6 +1251,16 @@
                                         label += formatMoney(context.parsed.y) + ' 万円';
                                     }
                                     return label;
+                                },
+                                afterBody: function(context) {
+                                    if (eventsData) {
+                                        const index = context[0].dataIndex;
+                                        const eventText = eventsData[index];
+                                        if (eventText) {
+                                            return "\n【主なイベント】\n" + eventText.split(" / ").join("\n");
+                                        }
+                                    }
+                                    return '';
                                 }
                             }
                         }
@@ -1202,7 +1272,6 @@
                             }
                         },
                         y: {
-                            stacked: true, // y軸のスタック(積み上げ)を有効化
                             title: {
                                 display: true,
                                 text: '金額 (万円)'
