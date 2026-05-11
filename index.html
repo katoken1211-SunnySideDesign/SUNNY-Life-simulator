@@ -634,7 +634,11 @@
                     <h2 class="section-title">🏠 住宅計画</h2>
                     <div class="form-group" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                         <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="housingType" value="buy" checked onchange="toggleHousing()"> 購入</label>
-                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="housingType" value="rent" onchange="toggleHousing()"> 賃貸</label>
+                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="housingType" value="rent" onchange="toggleHousing()"> 一生賃貸</label>
+                    </div>
+                    <div class="form-group">
+                        <label id="rentLabel">購入までの家賃 (万円/月)</label>
+                        <input type="number" id="monthlyRent" class="form-control" value="12">
                     </div>
                     <div id="housingBuyInputs">
                         <div class="input-group form-group">
@@ -660,12 +664,6 @@
                                 <label>金利(%)</label>
                                 <input type="number" id="houseInterest" class="form-control" value="1.5" step="0.1">
                             </div>
-                        </div>
-                    </div>
-                    <div id="housingRentInputs" style="display: none;">
-                        <div class="form-group">
-                            <label>毎月の家賃 (万円)</label>
-                            <input type="number" id="monthlyRent" class="form-control" value="12">
                         </div>
                     </div>
                 </div>
@@ -866,7 +864,7 @@
         function toggleHousing() {
             const isBuy = document.querySelector('input[name="housingType"]:checked').value === 'buy';
             document.getElementById('housingBuyInputs').style.display = isBuy ? 'block' : 'none';
-            document.getElementById('housingRentInputs').style.display = !isBuy ? 'block' : 'none';
+            document.getElementById('rentLabel').innerText = isBuy ? '購入までの家賃 (万円/月)' : '一生の家賃 (万円/月)';
         }
 
         function toggleCar() {
@@ -1107,6 +1105,11 @@
 
                 // --- 住宅費用 ---
                 if (housingType === 'buy') {
+                    if (age < houseAge) {
+                        const annualRent = monthlyRent * 12;
+                        cash -= annualRent;
+                        totalLoanPaid += annualRent;
+                    }
                     if (age === houseAge && houseBudget > 0) {
                         cash -= houseDownPayment;
                         currentEvents.push("住宅購入(頭金支払)");
@@ -1230,8 +1233,11 @@
             document.getElementById('resLoanTotal').innerText = `${formatMoney(totalLoanPaid)} 万円`;
             
             if (housingType === 'buy') {
-                document.querySelector('#housingKpiCard h3').innerText = "🏠 住宅ローン総支払額";
-                document.getElementById('resLoanSub').innerText = "※頭金は含まない";
+                document.querySelector('#housingKpiCard h3').innerText = "🏠 生涯の住宅関連支出";
+                document.getElementById('resLoanSub').innerText = "※頭金と購入前家賃を含む";
+                // 頭金を別途加算する場合はここで対応する
+                totalLoanPaid += houseDownPayment;
+                document.getElementById('resLoanTotal').innerText = `${formatMoney(totalLoanPaid)} 万円`;
             } else {
                 document.querySelector('#housingKpiCard h3').innerText = "🏠 生涯の家賃支払総額";
                 document.getElementById('resLoanSub').innerText = "※現在から終了年齢まで";
@@ -1395,8 +1401,8 @@
             const $ = id => document.getElementById(id) ? document.getElementById(id).value : '0';
             const housingType = document.querySelector('input[name="housingType"]:checked').value === 'buy' ? '購入' : '賃貸';
             let housingInfo = housingType === '賃貸' 
-                ? `家賃: ${$('monthlyRent')}万円/月` 
-                : `予算: ${$('houseBudget')}万円 (頭金: ${$('houseDownPayment')}万円 / ${$('houseYears')}年ローン / 金利 ${$('houseInterest')}%) / 購入年齢: ${$('houseAge')}歳`;
+                ? `一生の家賃: ${$('monthlyRent')}万円/月` 
+                : `購入前家賃: ${$('monthlyRent')}万円/月 / 予算: ${$('houseBudget')}万円 (頭金: ${$('houseDownPayment')}万円 / ${$('houseYears')}年ローン / 金利 ${$('houseInterest')}%) / 購入年齢: ${$('houseAge')}歳`;
                 
             const carOwnership = document.querySelector('input[name="carOwnership"]:checked').value === 'buy' ? '購入する' : '買わない';
             let carInfo = carOwnership === '買わない' 
