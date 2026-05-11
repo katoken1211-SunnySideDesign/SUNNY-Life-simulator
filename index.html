@@ -454,6 +454,97 @@
             margin-bottom: 0.5rem;
             color: var(--color-text-heading);
         }
+        /* ====================
+           Print Styles
+           ==================== */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body {
+                background-color: #fff;
+                color: #000;
+                font-size: 10pt;
+                padding: 0;
+            }
+            .header, .footer, .sidebar, button, .site-header, .site-footer, .ad-placeholder {
+                display: none !important;
+            }
+            .main-content {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                border: none;
+                box-shadow: none;
+            }
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+                display: block;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .chart-card, .kpi-card, .result-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .dashboard-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .kpi-grid {
+                display: flex;
+                gap: 1rem;
+            }
+            .result-card, .kpi-card {
+                flex: 1;
+                min-width: 30%;
+            }
+            canvas {
+                max-width: 100% !important;
+            }
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #ccc;
+                padding: 0.5rem;
+                text-align: left;
+                font-size: 0.85rem;
+            }
+            .print-table th {
+                background: #f3f4f6;
+                width: 40%;
+                font-weight: bold;
+            }
+            /* Hide modal on print */
+            .modal-overlay {
+                display: none !important;
+            }
+            /* Adjust margins */
+            .chart-card {
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+            h2, h3 {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+        }
+        .print-only {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -649,7 +740,21 @@
         </aside>
 
         <!-- Main Chart & Results -->
-        <main class="main-content">
+        <main class="main-content" id="resultArea">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;" class="no-print">
+                <h2 style="font-size: 1.5rem; color: var(--color-text-heading); margin: 0;">シミュレーション結果</h2>
+                <button class="btn" style="background-color: var(--color-primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: var(--radius-md); cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;" onclick="window.print()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    レポートをPDF出力
+                </button>
+            </div>
+
+            <!-- Print Title and Input Summary (visible only when printing) -->
+            <div id="printSummary" class="print-only">
+                <h1 style="font-size: 1.5rem; text-align: center; margin-bottom: 1.5rem; color: #1e3a8a;">SUNNY Life Simulator ライフプランレポート</h1>
+                <div id="printConditionContent" style="margin-bottom: 1.5rem;"></div>
+            </div>
+
             <!-- Header Ad Space -->
             <div class="ad-placeholder ad-header">Google AdSense Header<br>(728x90)</div>
 
@@ -1163,6 +1268,7 @@
             document.getElementById('eduBreakdown').innerHTML = eduLogHTML;
 
             drawChart(labelsAge, dataCash, dataInvest, dataTotal, dataEvents);
+            updatePrintSummary();
         }
 
         // ==========================================
@@ -1280,6 +1386,50 @@
                     }
                 }
             });
+        }
+
+        // ==========================================
+        // 6. レポート印刷用のサマリ生成
+        // ==========================================
+        function updatePrintSummary() {
+            const $ = id => document.getElementById(id) ? document.getElementById(id).value : '0';
+            const housingType = document.querySelector('input[name="housingType"]:checked').value === 'buy' ? '購入' : '賃貸';
+            let housingInfo = housingType === '賃貸' 
+                ? `家賃: ${$('monthlyRent')}万円/月` 
+                : `予算: ${$('houseBudget')}万円 (頭金: ${$('houseDownPayment')}万円 / ${$('houseYears')}年ローン / 金利 ${$('houseInterest')}%) / 購入年齢: ${$('houseAge')}歳`;
+                
+            const carOwnership = document.querySelector('input[name="carOwnership"]:checked').value === 'buy' ? '購入する' : '買わない';
+            let carInfo = carOwnership === '買わない' 
+                ? `なし`
+                : `予算: ${$('carBudget')}万円 / 初回年齢: ${$('carAge')}歳 / 買替: ${$('carCycle')}年毎`;
+                
+            const debtInfo = parseFloat($('currentDebtAmount')) > 0 
+                ? `${$('currentDebtAmount')}万円 (残期間: ${$('currentDebtYears')}年 / 金利: ${$('currentDebtInterest')}%)` 
+                : 'なし';
+
+            const html = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; font-size: 0.9rem;">
+                    <table class="print-table">
+                        <tr><th>現在年齢</th><td>${$('currentAge')}歳</td></tr>
+                        <tr><th>現在の貯金残高</th><td>${$('currentCash')}万円</td></tr>
+                        <tr><th>現在の投資残高</th><td>${$('currentInvest')}万円</td></tr>
+                        <tr><th>現在の借入残高</th><td>${debtInfo}</td></tr>
+                        <tr><th>現在世帯年収</th><td>${$('annualIncome')}万円</td></tr>
+                        <tr><th>昇給見込み</th><td>年 ${$('salaryIncrease')}%</td></tr>
+                        <tr><th>退職年齢</th><td>${$('retirementAge')}歳</td></tr>
+                        <tr><th>退職金</th><td>${$('retirementAllowance')}万円</td></tr>
+                    </table>
+                    <table class="print-table">
+                        <tr><th>基本生活費</th><td>${$('annualExpense')}万円/年</td></tr>
+                        <tr><th>住宅プラン</th><td>${housingType} (${housingInfo})</td></tr>
+                        <tr><th>自動車プラン</th><td>${carInfo}</td></tr>
+                        <tr><th>退職後収入</th><td>年金等: ${$('retirementIncome')}万円/年</td></tr>
+                        <tr><th>退職後生活費</th><td>${$('retirementExpense')}万円/年</td></tr>
+                        <tr><th>年間特別費</th><td>${$('annualSpecialExpense')}万円/年</td></tr>
+                    </table>
+                </div>
+            `;
+            document.getElementById('printConditionContent').innerHTML = html;
         }
 
         // ==== Modal Behaviors ====
