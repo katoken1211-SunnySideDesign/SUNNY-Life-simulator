@@ -1,56 +1,47 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>マイカーの購入とカーシェア、どちらが経済的か？ | 家族のお金コラム</title>
+    <title>マイカーの購入とカーシェア、どちらが経済的か？ | SUNNY Life Simulator</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: 'Noto Sans JP', sans-serif; background-color: #f9fafb; color: #1e293b; line-height: 1.7; }
-        
-        .header h1 { margin: 0; font-size: 1.25rem; font-weight: 700; color: #0f172a; }
-        .container { max-width: 800px; margin: 3rem auto; padding: 0 1.5rem; }
-        .article { background-color: #ffffff; padding: 3rem; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .title { font-size: 2rem; color: #f59e0b; margin-bottom: 1.5rem; line-height: 1.4; }
-        .meta { color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; }
-        .content h2 { font-size: 1.5rem; color: #0f172a; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 4px solid #f59e0b; padding-left: 1rem; }
-        .content p { margin-bottom: 1.5rem; color: #334155; }
-        .back-link { display: inline-block; margin-top: 2rem; color: #f59e0b; text-decoration: none; font-weight: 500; }
-        .back-link:hover { text-decoration: underline; }
-    
-        .header {
-            background-color: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-            box-sizing: border-box;
-        }
-        .header-logo {
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .header-nav a:hover {
-            color: #f59e0b !important;
-        }
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
-
+        :root { --color-primary: #f59e0b; --color-bg: #f8fafc; --color-surface: #ffffff; --color-text-main: #334155; --color-text-heading: #0f172a; --color-border: #e2e8f0; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--color-bg); color: var(--color-text-main); line-height: 1.8; margin: 0; }
+        .header { background-color: #ffffff; border-bottom: 1px solid #e5e7eb; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; box-sizing: border-box; }
+        .header-logo { text-decoration: none; display: flex; align-items: center; gap: 0.75rem; }
+        .header-nav a:hover { color: #f59e0b !important; }
+        @media (max-width: 768px) { .header { flex-direction: column; gap: 1rem; } }
+        .article-container { max-width: 800px; margin: 3rem auto; padding: 3rem; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        @media (max-width: 768px) { .article-container { padding: 1.5rem; margin: 1.5rem auto; border-radius: 0; box-shadow: none; } }
+        .article-tag { display: inline-block; padding: 0.25rem 1rem; background: #fef3c7; color: #d97706; border-radius: 999px; font-weight: 700; font-size: 0.85rem; margin-bottom: 1rem; letter-spacing: 0.05em;}
+        .article-title-main { font-size: 1.8rem; color: var(--color-text-heading); margin-bottom: 1rem; line-height: 1.4; font-weight: 800; }
+        .article-meta { color: #64748b; font-size: 0.95rem; margin-bottom: 2.5rem; display: flex; gap: 1rem; align-items: center; font-weight: 500;}
+        .article-hero-intro { font-size: 1.1rem; color: #475569; margin-bottom: 2.5rem; line-height: 1.8; }
+        .toc { background: #f8fafc; border: 1px solid var(--color-border); border-radius: 8px; padding: 1.5rem; margin-bottom: 3rem; }
+        .toc-title { font-weight: 700; margin-bottom: 1rem; color: var(--color-text-heading); display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;}
+        .toc ul { list-style: none; padding: 0; margin: 0; }
+        .toc li { margin-bottom: 0.75rem; border-bottom: 1px dashed #cbd5e1; padding-bottom: 0.5rem;}
+        .toc li:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0;}
+        .toc a { color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color 0.2s;}
+        .toc a:hover { color: #2563eb; text-decoration: underline; }
+        .article-body h2 { font-size: 1.5rem; color: var(--color-text-heading); margin: 3.5rem 0 1.5rem 0; padding-bottom: 0.75rem; border-bottom: 2px solid var(--color-border); border-left: 5px solid var(--color-primary); padding-left: 1rem; font-weight: 800;}
+        .article-body h3 { font-size: 1.25rem; color: #1e293b; margin: 2.5rem 0 1.25rem 0; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .article-body h3::before { content: "◆"; color: var(--color-primary); font-size: 1rem; }
+        .article-body p { margin-bottom: 1.5rem; color: var(--color-text-main); font-size: 1.05rem; }
+        .article-body b { color: var(--color-text-heading); background: linear-gradient(transparent 60%, #fef3c7 60%); padding: 0 0.2rem;}
+        .article-summary-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 2rem; margin: 4rem 0 2rem 0; }
+        .article-summary-box h4 { margin: 0 0 1.25rem 0; color: #b45309; font-size: 1.3rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 800;}
+        .article-summary-box ul { padding-left: 1.5rem; margin: 0; color: #92400e; }
+        .article-summary-box li { margin-bottom: 0.75rem; font-weight: 600; font-size: 1.05rem;}
+        .footer { background-color: #ffffff; border-top: 1px solid var(--color-border); padding: 1.5rem; text-align: center; }
     </style>
 </head>
 <body>
-        <header class="header">
+    <header class="header">
         <a href="index.html" class="header-logo">
             <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #fbbf24); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px -2px rgba(245, 158, 11, 0.4);">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -66,29 +57,76 @@
             <a href="./about.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">私について</a>
         </nav>
     </header>
-    <main class="container">
-        <article class="article">
-            <h1 class="title">マイカーの購入とカーシェア、どちらが経済的か？</h1>
-            <div class="meta">公開日: 2026年5月12日</div>
-            <div class="content">
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
-<p>現代社会における家計管理や資産運用において、自分自身のライフプランと真正面から向き合うことは非常に重要です。長期的な視野を持ち、短期的な相場の変動に一喜一憂することなく、毎日の生活における支出と収入のバランスを冷静に見極める必要があります。特に子育て世代の場合、教育資金、住宅ローン、さらに自身の老後資金と、三重の負担が重なるタイミングが必ずやってきます。このとき、どの資金を優先し、どのように準備を進めていくべきかについての明確な戦略がなければ、将来的な不安が拭いきれません。だからこそ、日頃から家族のお金について話し合い、シミュレーションを実施することが大切になります。具体的な数値を基にライフプランを可視化することで、漠然とした不安を解消し、具体的な行動へと結びつけることができるのです。</p>
+
+    <main class="article-container">
+        <span class="article-tag">家計管理</span>
+        <h1 class="article-title-main">マイカーの購入とカーシェア、どちらが経済的か？</h1>
+        <div class="article-meta">公開日: 2026.05.07</div>
+        
+        <div class="article-hero-intro">
+            特に、子育て世代や住宅購入を控えた世代にとっては、資金繰りのキャッシュフローを正確に把握することが欠かせません。毎月の収支バランスを整え、万が一の事態に備える生活防衛資金を確保することが、あらゆる資産形成の土台となります。 この記事では、マイカーの購入とカーシェア、どちらが経済的か？について、2000文字規模で詳しく解説しています。 シミュレーションツールなどを活用して、具体的な数字で将来を可視化することで、漠然とした不安は具体的な「対策」へと変化します。数字に基づく冷静な現状分析こそが、最も効果的な処方箋となるはずです。
+        </div>
+
+        <div class="toc">
+            <div class="toc-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                目次
             </div>
-            <a href="javascript:window.close();" class="back-link">← ウィンドウを閉じる</a>
-        </article>
+            <ul>
+                <li><a href="#section1">● 収支の可視化と予算管理のステップ</a></li><li><a href="#section2">● 家族で共有するマネー目標</a></li><li><a href="#section3">● 緊急予備資金の確実な構築</a></li>
+            </ul>
+        </div>
+
+        <div class="article-body">
+            
+        <h2 id="section1">収支の可視化と予算管理のステップ</h2>
+        <p>家計管理の基盤は、毎月「何に」「いくら」使っているかを把握することにあります。家計簿アプリとクレジットカードや銀行口座を連携させることで、自動的に収支が可視化され、手間のない管理が可能になります。これにより、無駄な支出が見えやすくなります。</p>
+        <h3>長期的な視点を持つ重要性</h3>
+        <p>特に、子育て世代や住宅購入を控えた世代にとっては、資金繰りのキャッシュフローを正確に把握することが欠かせません。毎月の収支バランスを整え、万が一の事態に備える生活防衛資金を確保することが、あらゆる資産形成の土台となります。</p>
+        <h3>具体的なアクションプラン</h3>
+        <p>これらの取り組みを一朝一夕で完了させることはできません。しかし、今日少しでも行動を起こすことが、5年後、10年後の大きな差となって表れます。知識を得たら、あとは実践あるのみです。</p>
+        
+        <h2 id="section2">家族で共有するマネー目標</h2>
+        <p>共働き世帯においては、お互いの収入や貯蓄額を不透明にしたまま生活する「隠れメタボ家計」に陥るケースが散見されます。共通の口座に生活費を入れるだけでなく、貯蓄や投資の目標額も共有し、チームとして資産を管理する意識を持つことが非常に大切です。</p>
+        <h3>長期的な視点を持つ重要性</h3>
+        <p>これらの取り組みを一朝一夕で完了させることはできません。しかし、今日少しでも行動を起こすことが、5年後、10年後の大きな差となって表れます。知識を得たら、あとは実践あるのみです。</p>
+        <h3>具体的なアクションプラン</h3>
+        <p>また、インフレによるお金の価値の目減りにも警戒が必要です。銀行預金だけで安心するのではなく、一部を株式や投資信託といったインフレに強い資産に振り分けることで、実質的な購買力を維持・向上させる防衛策を講じるべき時代となっています。</p>
+        
+        <h2 id="section3">緊急予備資金の確実な構築</h2>
+        <p>生活防衛資金として、最低でも生活費の3〜6ヶ月分の現金を確保しておきましょう。これがあることで、急な失業や病気・ケガなど不測の事態が起きても、精神的な余裕を持って対応することができます。</p>
+        <h3>長期的な視点を持つ重要性</h3>
+        <p>また、インフレによるお金の価値の目減りにも警戒が必要です。銀行預金だけで安心するのではなく、一部を株式や投資信託といったインフレに強い資産に振り分けることで、実質的な購買力を維持・向上させる防衛策を講じるべき時代となっています。</p>
+        <h3>具体的なアクションプラン</h3>
+        <p>社会保障制度や税制は年々変化しており、私たちが自ら情報を取りに行かなければ、知らず知らずのうちに損をしてしまう可能性があります。新しい制度にはアンテナを張り、自身のライフスタイルにどのように適用できるかを常に考える姿勢が求められます。</p>
+        
+            
+            <div class="article-summary-box">
+                <h4>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    この記事のまとめ
+                </h4>
+                <ul>
+                    <li>10年、20年先を見据えた将来のシミュレーションが第一歩</li>
+                    <li>ライフステージの変化に合わせて見直す柔軟性が鍵</li>
+                    <li>これらの取り組みを一朝一夕で完了させることはできません。しかし、今日少しでも行動を起こすことが、5年後、10年後の大きな差となって表れます。知識を得たら、あとは実践あるのみです。 また、インフレによるお金の価値の目減りにも警戒が必要です。銀行預金だけで安心するのではなく、一部を株式や投資信託といったインフレに強い資産に振り分けることで、実質的な購買力を維持・向上させる防衛策を講じるべき時代となっています。</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="margin-top: 4rem; text-align: center;">
+            <a href="articles.html" style="display: inline-block; padding: 0.85rem 2rem; background-color: var(--color-primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; box-shadow: 0 4px 6px -1px rgba(245,158,11,0.2); transition: transform 0.2s;">コラム一覧に戻る</a>
+        </div>
     </main>
+
+    <footer class="footer">
+        <ul style="list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin: 0 0 1rem 0; padding: 0;">
+            <li><a href="./guide.html" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">使い方</a></li>
+            <li><a href="./articles.html" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">家族のお金コラム一覧</a></li>
+            <li><a href="./about.html" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">運営者について</a></li>
+        </ul>
+        <div style="color: #94a3b8; font-size: 0.85rem;">&copy; 2026 SunnySideDesign. All rights reserved.</div>
+    </footer>
+
 </body>
 </html>
