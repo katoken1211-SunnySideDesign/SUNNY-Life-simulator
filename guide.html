@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使い方 | SUNNY Life Simulator</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-primary: #f59e0b;
+            --color-bg: #f9fafb;
+            --color-surface: #ffffff;
+            --color-text-main: #1e293b;
+            --color-text-heading: #0f172a;
+            --color-text-muted: #64748b;
+            --color-border: #e5e7eb;
+            --radius-md: 0.25rem;
+            --radius-lg: 0.75rem;
+        }
+
+        body {
+            font-family: 'Open Sans', 'Noto Sans JP', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        
+
+        
+
+        .article-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: var(--color-surface);
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-title {
+            font-size: 2rem;
+            color: var(--color-text-heading);
+            margin-bottom: 2rem;
+            line-height: 1.3;
+            text-align: center;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 1rem;
+        }
+
+        .article-body h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-heading);
+            border-left: 4px solid var(--color-primary);
+            padding-left: 0.75rem;
+        }
+
+        .article-body p {
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            color: var(--color-text-main);
+        }
+
+        .article-body ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .article-body li {
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+        
+        .footer {
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 4rem;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+    
+        .header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+        .header-logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .header-nav a:hover {
+            color: #f59e0b !important;
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+        <header class="header">
+        <a href="index.html" class="header-logo">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #fbbf24); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px -2px rgba(245, 158, 11, 0.4);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1;">
+                <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: 0.05em; color: #0f172a; text-decoration: none;">SUNNY</span>
+                <span style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; color: #f59e0b; margin-top: 2px;">LIFE SIMULATOR</span>
+            </div>
+        </a>
+        <nav class="header-nav" style="display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; justify-content: center;">
+            <a href="./guide.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">シミュレーターの使い方</a>
+            <a href="./articles.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">お金のコラム</a>
+            <a href="./about.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">私について</a>
+        </nav>
+    </header>
+
+    <main class="article-container">
+        <h1 class="article-title">SUNNY Life Simulator の使い方</h1>
+        
+        <div class="article-body">
+            <p>SUNNY Life Simulatorをご利用いただきありがとうございます。このツールは、ご家族のライフプランに合わせて、将来の資産や支出の推移を直感的にシミュレーションするためのツールです。</p>
+            
+            <h2><span class="step-number">1</span> 基本情報を入力する</h2>
+            <p>まずは、現在の年齢、貯金残高、投資残高、そして世帯年収や毎月の基本生活費を入力します。この基本情報がシミュレーションの出発点となります。</p>
+            <ul>
+                <li><strong>生活費の見直し：</strong> 現在の生活費を入力することで、将来にわたってどれくらいのコストがかかるかがグラフに反映されます。</li>
+                <li><strong>退職時の設定：</strong> 退職年齢や見込み退職金、退職後の年金収入などを入力することで、老後の資金ショート（2000万円問題など）をリアルに確認できます。</li>
+            </ul>
+
+            <h2><span class="step-number">2</span> お子様の状況を設定する</h2>
+            <p>お子様の現在の年齢と、将来の進学ルート（公立・私立など）をプルダウンから選択してください。</p>
+            <ul>
+                <li>教育費は人生の三大支出のひとつです。「小学校から受験するパターン」「高校から私立のパターン」などを切り替えて、学費のピーク時期を把握しましょう。</li>
+                <li>「子供を追加」ボタンから、複数のお子様のシミュレーションも可能です。</li>
+            </ul>
+            
+            <h2><span class="step-number">3</span> 住宅プランを検討する</h2>
+            <p>「購入」と「一生賃貸」のラジオボタンを切り替えて、それぞれのプランでのキャッシュフローを比較できます。</p>
+            <ul>
+                <li><strong>購入の場合：</strong> 購入予定年齢、予算、頭金、ローン年金や金利を設定します。頭金を多く入れた場合とそうでない場合の違いを確認できます。</li>
+                <li><strong>賃貸の場合：</strong> 一生賃貸に住み続けた場合の家賃総額と、住宅購入時の支払総額を比較検討できます。</li>
+            </ul>
+
+            <h2><span class="step-number">4</span> 自動車プランを検討する</h2>
+            <p>車を「購入する」か「買わない」かを選択します。自動車も大きな支出の一つです。買い替えサイクルや予算を設定して、カーシェア（買わない選択）との違いをグラフで確認しましょう。</p>
+
+            <h2><span class="step-number">5</span> グラフとサマリーを確認する</h2>
+            <p>すべての条件を入力・変更すると、右側（スマートフォンでは下部）のグラフがリアルタイムで更新されます。</p>
+            <ul>
+                <li><strong>資産推移グラフ：</strong> 年齢ごとの現金と投資の残高推移を積上げ面グラフで確認できます。赤色（マイナス）の領域が出た場合は、家計がショートするタイミングです。条件を見直してみましょう。</li>
+                <li><strong>キャッシュフロー詳細：</strong> 年齢ごとの収入と支出の棒グラフを見ることで、数年後にやってくる支出の波（教育費のピークやローン支払いなど）を視覚的に把握できます。</li>
+                <li><strong>KPIカード：</strong> 右下のカードには、65歳時点での予想試算残高や、生涯の教育費・住宅費の合計が表示されます。</li>
+            </ul>
+
+            <h2>結果を保存・印刷する</h2>
+            <p>シミュレーション結果に納得がいったら、右上の「レポート印刷」ボタンから、現在の条件とグラフを1枚のレポートとして印刷（またはPDFとして保存）することができます。ご家族での話し合いの資料としてぜひご活用ください。</p>
+        </div>
+        <div style="margin-top: 3rem; text-align: center;">
+            <a href="index.html" style="display: inline-block; padding: 0.75rem 1.5rem; background-color: var(--color-primary); color: white; text-decoration: none; border-radius: var(--radius-md); font-weight: bold;">シミュレーターに戻る</a>
+        </div>
+    </main>
+
+    
+    <footer class="footer">
+        <ul style="list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin: 0 0 1rem 0; padding: 0;">
+            <li><a href="./guide.html" target="_blank" style="color: var(--color-text-muted); text-decoration: none;">使い方</a></li>
+            <li><a href="./articles.html" target="_blank" style="color: var(--color-text-muted); text-decoration: none;">家族のお金コラム一覧</a></li>
+            <li><a href="./about.html" target="_blank" style="color: var(--color-text-muted); text-decoration: none;">運営者について</a></li>
+        </ul>
+        <div>&copy; 2024 SunnySideDesign. All rights reserved.</div>
+    </footer>
+
+
+</body>
+</html>
