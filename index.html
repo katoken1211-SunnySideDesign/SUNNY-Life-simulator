@@ -733,6 +733,26 @@
 
         <!-- Main Chart & Results -->
         <main class="main-content" id="resultArea">
+
+            <section class="seo-section no-print" style="margin-bottom: 2.5rem; background: var(--color-surface); padding: 2rem; border-radius: var(--radius-lg); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <h2 style="font-size: 1.5rem; color: var(--color-text-heading); margin-bottom: 1rem; border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">SUNNY Life Simulatorの使い方と活用例</h2>
+                <p style="margin-bottom: 1.5rem;">本シミュレーターは、ご家族の将来のお金の流れを簡単に可視化できるツールです。例えば、「2人の子どもがおり、1人は高校から私立、もう1人はすべて公立」といった具体的な教育費のシナリオや、「毎月3万円をNISAでつみたて投資し、ボーナス時に成長投資枠を活用する」といった資産形成のプランを詳細にシミュレーションできます。グラフ化された結果をもとに、将来の資金ショートを防ぐための対策をご家族で話し合うきっかけ作りに最適です。</p>
+                
+                <h3 style="font-size: 1.25rem; color: var(--color-text-heading); margin-bottom: 0.75rem;">データソースについて</h3>
+                <p style="margin-bottom: 1.5rem;">教育費などの概算データは、文部科学省の「子供の学習費調査」等の公的な統計データを参考にしつつ、近年の物価上昇も考慮に入れた現実的な数値を採用しています。</p>
+
+                <h3 style="font-size: 1.25rem; color: var(--color-text-heading); margin-bottom: 0.75rem;">運営者情報（E-E-A-T）</h3>
+                <div style="display: flex; gap: 1.5rem; align-items: flex-start; margin-bottom: 0.5rem;">
+                    <div style="flex-shrink: 0; width: 64px; height: 64px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--color-primary);">
+                        <span style="font-size: 1.5rem; font-weight: bold; color: #64748b;">K</span>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: #0f172a; font-size: 1.1rem;">KATOKEN <span style="font-size: 0.85rem; color: #64748b; font-weight: normal;">/ SUNNY SIDE DESIGN</span></h4>
+                        <p style="margin: 0; font-size: 0.95rem; color: var(--color-text-main);">SUNNY SIDE DESIGNにてWebデザイン・システム開発事業を展開。自身の子育てや住宅購入、資産形成（NISA等）におけるリアルな経験を活かし、「誰もが直感的に、そして視覚的なストレスなく使えるシミュレーター」を目指して本ツールを開発しました。専門的な知識がなくても、長期的なライフプランを描くことができるようサポートします。</p>
+                    </div>
+                </div>
+            </section>
+
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;" class="no-print">
                 <h2 style="font-size: 1.5rem; color: var(--color-text-heading); margin: 0;">シミュレーション結果</h2>
                 <button class="btn" style="background-color: var(--color-primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: var(--radius-md); cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;" onclick="window.print()">
@@ -801,8 +821,8 @@
             </div>
             <div class="footer-col">
                 <ul class="footer-links">
-                    <li><a href="#" onclick="openModal('disclaimerModal'); return false;">免責事項</a></li>
-                    <li><a href="#" onclick="openModal('privacyModal'); return false;">プライバシーポリシー</a></li>
+                    <li><a href="disclaimer.html">免責事項</a></li>
+                    <li><a href="privacy.html">プライバシーポリシー</a></li>
                     <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSerISfXpWJv6htob3dv3P65R947qsNlSwvWNYDb-bqdWh6Prw/viewform" target="_blank">お問い合わせ</a></li>
                     <li><a href="./guide.html" target="_blank">使い方</a></li>
                     <li><a href="./articles.html" target="_blank">家族のお金コラム一覧</a></li>
@@ -812,38 +832,7 @@
         </div>
     </footer>
 
-    <!-- Modals -->
-    <div id="disclaimerModal" class="modal-overlay" onclick="closeModalOnBgClick(event, 'disclaimerModal')">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('disclaimerModal')">&times;</button>
-            <h3 class="modal-title">免責事項</h3>
-            <div class="modal-body">
-                <p>当シミュレーションツール（以下、本ツール）は、ユーザーが入力した情報を基に参考となるライフプランの試算結果を提供するものです。</p>
-                <h4>1. 結果の正確性について</h4>
-                <p>本ツールが算出した結果はあくまでも一定の前提条件に基づく概算であり、将来の経済状況、税制、金利動向などにより変わる可能性があります。投資成果や実際のキャッシュフローを保証するものではありません。</p>
-                <h4>2. 意思決定について</h4>
-                <p>本ツールの結果を参考にした上で、実際の投資や住宅購入、保険の加入等の最終的な意思決定は、ご自身の判断と責任において行ってください。</p>
-                <h4>3. 損害への対応</h4>
-                <p>本ツールを利用したことにより生じた、いかなる直接的・間接的な損害についても、当サイトおよび運営者は一切の責任を負いません。</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="privacyModal" class="modal-overlay" onclick="closeModalOnBgClick(event, 'privacyModal')">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('privacyModal')">&times;</button>
-            <h3 class="modal-title">プライバシーポリシー</h3>
-            <div class="modal-body">
-                <p>当サイトは、ユーザーのプライバシー保護を最優先に考えております。</p>
-                <h4>1. 入力データの取り扱い</h4>
-                <p>本シミュレーションツールで入力された年齢、年収、資産額などの全てのデータは、ご利用のブラウザ内（ローカル環境）での計算のみに使用されます。<strong>外部のサーバーへ送信・保存されることは一切ありません。</strong></p>
-                <h4>2. アクセス解析について</h4>
-                <p>当サイトでは利用状況の把握のためにGoogle Analyticsを利用する場合があります。データは匿名で収集されており、個人を特定するものではありません。</p>
-                <h4>3. 広告について</h4>
-                <p>当サイトでは、第三者配信の広告サービスを利用しています。広告配信事業者は、ご利用者の関心に応じた広告を表示するためにCookieを使用することがあります。</p>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Simulation Logic -->
     <script>
