@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUNNY Life simulator | SunnySideDesign</title>
+
+    <!-- OGP Settings -->
+    <meta property="og:title" content="SUNNY Life simulator | SunnySideDesign">
+    <meta property="og:description" content="家族の未来をシミュレーション。住宅購入、教育費、老後資金などのライフプランを可視化します。">
+    <meta property="og:image" content="/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Google Fonts: Google Sans & Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ==============================================================
+           CSS Variables & Base styling (Clean Minimalism UI/UX)
+           ============================================================== */
+        :root {
+            --color-primary: #f59e0b; /* amber-500 */
+            --color-primary-hover: #d97706; /* amber-600 */
+            --color-primary-light: #fef3c7; /* amber-50 */
+            --color-bg: #f9fafb; /* gray-50 */
+            --color-surface: #ffffff; /* white */
+            --color-text-main: #1e293b; /* slate-800 */
+            --color-text-heading: #0f172a; /* slate-900 */
+            --color-text-muted: #64748b; /* slate-500 */
+            --color-text-hint: #9ca3af; /* gray-400 */
+            --color-border: #e5e7eb; /* gray-200 */
+            
+            --color-cash: #60a5fa;      /* blue-400 */
+            --color-invest: #34d399;    /* emerald-400 */
+            --color-btn-bg: #0f172a;    /* slate-900 */
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius-md: 0.25rem; /* rounded */
+            --radius-lg: 0.75rem; /* rounded-xl */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Open Sans', 'Noto Sans JP', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Full app layout */
+        }
+
+        /* ==============================================================
+           Layout Configuration
+           ============================================================== */
+        
+
+        
+        
+        .header-logo svg {
+            color: var(--color-primary);
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            max-width: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                overflow: auto;
+            }
+            .container {
+                flex-direction: column;
+                overflow: visible;
+            }
+            .main-content {
+                overflow-y: visible;
+                padding: 1rem;
+            }
+        }
+
+        /* ==============================================================
+           Sidebar / Form Controls
+           ============================================================== */
+        .sidebar {
+            background-color: var(--color-surface);
+            border-right: 1px solid var(--color-border);
+            width: 320px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--color-border);
+                overflow-y: visible;
+            }
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-text-hint);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            border-bottom: none;
+            padding-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #cbd5e1;
+            background-color: var(--color-surface);
+            box-shadow: 0 0 0 1px #cbd5e1;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .input-group .form-control {
+            flex: 1;
+        }
+
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            background-color: var(--color-btn-bg);
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-align: center;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 1.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #334155;
+        }
+
+        /* ==============================================================
+           Main Content & Result Displays
+           ============================================================== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+            overflow-y: auto;
+            background-color: var(--color-bg);
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .kpi-card {
+            background-color: var(--color-surface);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kpi-card h3 {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            font-weight: 400;
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-card .val {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-heading);
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .kpi-card .sub-val {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 0;
+        }
+
+        .chart-card {
+            background-color: var(--color-surface);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 350px;
+            max-height: 60vh;
+        }
+        
+        .chart-card canvas {
+            flex: 1;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ==============================================================
+           Footer & Modals
+           ============================================================== */
+        .footer {
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: 0.75rem 1rem;
+            flex-shrink: 0;
+            font-size: 0.75rem;
+        }
+        .footer-inner {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .footer-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .footer-logo img {
+            height: 20px;
+            width: auto;
+            display: block;
+        }
+        .footer-desc {
+            color: var(--color-text-muted);
+            line-height: 1.4;
+            margin-top: 0.25rem;
+        }
+        .footer-copy {
+            color: var(--color-text-hint);
+            font-size: 0.7rem;
+        }
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+        @media (max-width: 640px) {
+            .footer-inner {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 0.75rem;
+            }
+            .footer-col > div {
+                justify-content: center;
+            }
+            .footer-links {
+                justify-content: center;
+            }
+        }
+        .footer-links a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: var(--color-primary);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: var(--color-surface);
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(10px);
+            transition: transform 0.2s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: #f1f5f9;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            transition: background-color 0.2s;
+        }
+        .modal-close:hover {
+            background-color: #e2e8f0;
+            color: var(--color-text-heading);
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-heading);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.75rem;
+        }
+        .modal-body {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--color-text-main);
+        }
+        .modal-body h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-heading);
+        }
+        /* ====================
+           Print Styles
+           ==================== */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body {
+                background-color: #fff;
+                color: #000;
+                font-size: 10pt;
+                padding: 0;
+            }
+            .header, .footer, .sidebar, button, .site-header, .site-footer {
+                display: none !important;
+            }
+            .main-content {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                border: none;
+                box-shadow: none;
+            }
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+                display: block;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .chart-card, .kpi-card, .result-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .dashboard-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .kpi-grid {
+                display: flex;
+                gap: 1rem;
+            }
+            .result-card, .kpi-card {
+                flex: 1;
+                min-width: 30%;
+            }
+            canvas {
+                max-width: 100% !important;
+            }
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #ccc;
+                padding: 0.5rem;
+                text-align: left;
+                font-size: 0.85rem;
+            }
+            .print-table th {
+                background: #f3f4f6;
+                width: 40%;
+                font-weight: bold;
+            }
+            /* Hide modal on print */
+            .modal-overlay {
+                display: none !important;
+            }
+            /* Adjust margins */
+            .chart-card {
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+            h2, h3 {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    
+        .header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+        .header-logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .header-nav a:hover {
+            color: #f59e0b !important;
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+    </style>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2801111628934180"
+     crossorigin="anonymous"></script>
+    <meta name="google-site-verification" content="MDlUXqBCXAlVvO6ZMz1m7qvK3aegiq3FbZWCuLb4Jhw" />
+</head>
+<body>
+
+    <!-- Header -->
+        <header class="header">
+        <a href="index.html" class="header-logo">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #fbbf24); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px -2px rgba(245, 158, 11, 0.4);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1;">
+                <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: 0.05em; color: #0f172a; text-decoration: none;">SUNNY</span>
+                <span style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; color: #f59e0b; margin-top: 2px;">LIFE SIMULATOR</span>
+            </div>
+        </a>
+        <nav class="header-nav" style="display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; justify-content: center;">
+            <a href="./index.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">ホーム（コラム）</a>
+            <a href="./simulator.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">シミュレーターを使う</a>
+            <a href="./guide.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">使い方</a>
+            <a href="./about.html" style="color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">私について</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar Options -->
+        <aside class="sidebar">
+            
+            <form id="simulatorForm" onsubmit="event.preventDefault(); runSimulation();">
+                
+                <!-- 基本情報 -->
+                <div class="section">
+                    <h2 class="section-title">👤 基本情報</h2>
+                    <div class="form-group">
+                        <label>現在の年齢 (歳)</label>
+                        <input type="number" id="currentAge" class="form-control" value="30" required>
+                    </div>
+                    <div class="form-group">
+                        <label>現在の現金資産 (万円)</label>
+                        <input type="number" id="currentCash" class="form-control" value="300" required>
+                    </div>
+                    <div class="form-group">
+                        <label>現在の投資総額 (万円)</label>
+                        <input type="number" id="currentInvest" class="form-control" value="100" required>
+                    </div>
+                    <div class="input-group form-group">
+                        <div style="flex: 1;">
+                            <label>手取り年収 (万円/年)</label>
+                            <input type="number" id="annualIncome" class="form-control" value="500" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>昇給割合 (%/年)</label>
+                            <input type="number" id="salaryIncrease" class="form-control" value="1.0" step="0.1" required>
+                        </div>
+                    </div>
+                    <div class="input-group form-group">
+                        <div style="flex: 1;">
+                            <label>副収入 (万円/年)</label>
+                            <input type="number" id="sideIncome" class="form-control" value="0" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>基本生活費 (万円/年)</label>
+                            <input type="number" id="annualExpense" class="form-control" value="240" required>
+                        </div>
+                    </div>
+                    <div class="input-group form-group">
+                        <div style="flex: 1;">
+                            <label>退職年齢 (歳)</label>
+                            <input type="number" id="retirementAge" class="form-control" value="65" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>退職金 (万円)</label>
+                            <input type="number" id="retirementAllowance" class="form-control" value="1500" required>
+                        </div>
+                    </div>
+                    <div class="input-group form-group">
+                        <div style="flex: 1;">
+                            <label>退職後年収(年金等:万円/年)</label>
+                            <input type="number" id="retirementIncome" class="form-control" value="200" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>退職後生活費(万円/年)</label>
+                            <input type="number" id="retirementExpense" class="form-control" value="200" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>年間特別費(レジャー等:万円/年)</label>
+                        <input type="number" id="annualSpecialExpense" class="form-control" value="30" required>
+                    </div>
+                </div>
+
+                <!-- 住宅購入 -->
+                <div class="section">
+                    <h2 class="section-title">🏠 住宅計画</h2>
+                    <div class="form-group" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="housingType" value="buy" checked onchange="toggleHousing()"> 購入</label>
+                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="housingType" value="rent" onchange="toggleHousing()"> 一生賃貸</label>
+                    </div>
+                    <div class="form-group">
+                        <label id="rentLabel">購入までの家賃 (万円/月)</label>
+                        <input type="number" id="monthlyRent" class="form-control" value="12">
+                    </div>
+                    <div id="housingBuyInputs">
+                        <div class="input-group form-group">
+                            <div style="flex: 1;">
+                                <label>購入年齢</label>
+                                <input type="number" id="houseAge" class="form-control" value="35">
+                            </div>
+                            <div style="flex: 1;">
+                                <label>予算(万円)</label>
+                                <input type="number" id="houseBudget" class="form-control" value="4000">
+                            </div>
+                        </div>
+                        <div class="input-group form-group">
+                            <div style="flex: 1;">
+                                <label>頭金(万円)</label>
+                                <input type="number" id="houseDownPayment" class="form-control" value="500">
+                            </div>
+                            <div style="flex: 1;">
+                                <label>期間(年)</label>
+                                <input type="number" id="houseYears" class="form-control" value="35">
+                            </div>
+                            <div style="flex: 1;">
+                                <label>金利(%)</label>
+                                <input type="number" id="houseInterest" class="form-control" value="1.5" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 現在の借入れ -->
+                <div class="section">
+                    <h2 class="section-title">💳 現在の借入れ(住宅ローン以外)</h2>
+                    <div class="input-group form-group">
+                        <div style="flex: 1;">
+                            <label>残金額(万円)</label>
+                            <input type="number" id="currentDebtAmount" class="form-control" value="0">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>残期間(年)</label>
+                            <input type="number" id="currentDebtYears" class="form-control" value="0">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>金利(%)</label>
+                            <input type="number" id="currentDebtInterest" class="form-control" value="3.0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 教育費 -->
+                <div class="section">
+                    <h2 class="section-title">🎓 教育</h2>
+                    <div id="childrenContainer">
+                        <!-- Initial child will be added via JS -->
+                    </div>
+                    <button type="button" onclick="addChild()" style="font-size: 0.75rem; padding: 0.5rem; background: var(--color-bg); border: 1px dashed var(--color-border); color: var(--color-text-main); border-radius: var(--radius-md); width: 100%; cursor: pointer;">+ 子供を追加</button>
+                    <p style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.5rem;">※学費の想定内訳は結果パネル下部に表示されます</p>
+                </div>
+
+                <!-- 自動車 -->
+                <div class="section">
+                    <h2 class="section-title">🚙 自動車購入</h2>
+                    <div class="form-group" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="carOwnership" value="buy" checked onchange="toggleCar()"> 購入する</label>
+                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;"><input type="radio" name="carOwnership" value="none" onchange="toggleCar()"> 買わない</label>
+                    </div>
+                    <div id="carBuyInputs" class="input-group form-group">
+                        <div style="flex: 1;">
+                            <label>初回購入年齢</label>
+                            <input type="number" id="carAge" class="form-control" value="32">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>予算(万円)</label>
+                            <input type="number" id="carBudget" class="form-control" value="300">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>買替(年)</label>
+                            <input type="number" id="carCycle" class="form-control" value="7">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 投資計画 -->
+                <div class="section">
+                    <h2 class="section-title">📈 投資戦略</h2>
+                    <div id="investmentsContainer">
+                        <!-- Initial items will be added via JS -->
+                    </div>
+                    <button type="button" onclick="addInvestment()" style="font-size: 0.75rem; padding: 0.5rem; background: var(--color-bg); border: 1px dashed var(--color-border); color: var(--color-text-main); border-radius: var(--radius-md); width: 100%; cursor: pointer;">+ 期間を追加</button>
+                </div>
+
+                <button type="submit" class="btn-primary">シミュレーション実行</button>
+            </form>
+
+
+        </aside>
+
+        <!-- Main Chart & Results -->
+        <main class="main-content" id="resultArea">
+
+            <section class="seo-section no-print" style="margin-bottom: 2.5rem; background: var(--color-surface); padding: 2rem; border-radius: var(--radius-lg); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <h2 style="font-size: 1.5rem; color: var(--color-text-heading); margin-bottom: 1rem; border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">SUNNY Life Simulatorの使い方と活用例</h2>
+                <p style="margin-bottom: 1.5rem;">本シミュレーターは、ご家族の将来のお金の流れを簡単に可視化できるツールです。例えば、「2人の子どもがおり、1人は高校から私立、もう1人はすべて公立」といった具体的な教育費のシナリオや、「毎月3万円をNISAでつみたて投資し、ボーナス時に成長投資枠を活用する」といった資産形成のプランを詳細にシミュレーションできます。グラフ化された結果をもとに、将来の資金ショートを防ぐための対策をご家族で話し合うきっかけ作りに最適です。</p>
+                
+                <h3 style="font-size: 1.25rem; color: var(--color-text-heading); margin-bottom: 0.75rem;">データソースについて</h3>
+                <p style="margin-bottom: 1.5rem;">教育費などの概算データは、文部科学省の「子供の学習費調査」等の公的な統計データを参考にしつつ、近年の物価上昇も考慮に入れた現実的な数値を採用しています。</p>
+
+                <h3 style="font-size: 1.25rem; color: var(--color-text-heading); margin-bottom: 0.75rem;">運営者情報（E-E-A-T）</h3>
+                <div style="display: flex; gap: 1.5rem; align-items: flex-start; margin-bottom: 0.5rem;">
+                    <div style="flex-shrink: 0; width: 64px; height: 64px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--color-primary);">
+                        <img src="/profile.png" alt="KATOKEN" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: #0f172a; font-size: 1.1rem;">KATOKEN <span style="font-size: 0.85rem; color: #64748b; font-weight: normal;">/ SUNNY SIDE DESIGN</span></h4>
+                        <p style="margin: 0; font-size: 0.95rem; color: var(--color-text-main);">SUNNY SIDE DESIGNにてWebデザイン・システム開発事業を展開。自身の子育てや住宅購入、資産形成（NISA等）におけるリアルな経験を活かし、「誰もが直感的に、そして視覚的なストレスなく使えるシミュレーター」を目指して本ツールを開発しました。専門的な知識がなくても、長期的なライフプランを描くことができるようサポートします。</p>
+                    </div>
+                </div>
+            </section>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;" class="no-print">
+                <h2 style="font-size: 1.5rem; color: var(--color-text-heading); margin: 0;">シミュレーション結果</h2>
+                <button class="btn" style="background-color: var(--color-primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: var(--radius-md); cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;" onclick="window.print()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    レポートをPDF出力
+                </button>
+            </div>
+
+            <!-- Print Title and Input Summary (visible only when printing) -->
+            <div id="printSummary" class="print-only">
+                <h1 style="font-size: 1.5rem; text-align: center; margin-bottom: 1.5rem; color: #1e3a8a;">SUNNY Life Simulator ライフプランレポート</h1>
+                <div id="printConditionContent" style="margin-bottom: 1.5rem;"></div>
+            </div>
+
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card" style="border-left-color: var(--color-cash);">
+                    <h3>💰 65歳時点の総資産</h3>
+                    <div class="val" id="resTotal65">0 万円</div>
+                    <div class="sub-val">現金: <span id="resCash65">0</span>万円 / 投資: <span id="resInvest65">0</span>万円</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #ec4899;">
+                    <h3>🎓 生涯の教育費合計</h3>
+                    <div class="val" id="resEduTotal">0 万円</div>
+                    <div class="sub-val" id="resEduSub">※各校の平均データを元に算出</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #8b5cf6;" id="housingKpiCard">
+                    <h3>🏠 住宅ローン総支払額</h3>
+                    <div class="val" id="resLoanTotal">0 万円</div>
+                    <div class="sub-val" id="resLoanSub">※頭金は含まない</div>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-card">
+                <canvas id="assetChart"></canvas>
+            </div>
+            
+            <!-- Details Container -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem;">
+                <div class="kpi-card" style="padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background-color: var(--color-surface); font-size: 0.8rem; line-height: 1.6;">
+                    <h4 style="font-size: 0.85rem; font-weight: 600; color: var(--color-text-heading); margin-bottom: 0.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.25rem;">📝 教育費の計算ベース（概算）</h4>
+                    <div id="eduBreakdown" style="color: var(--color-text-muted);">
+                        <!-- Breakdown will be injected here -->
+                        <div style="color: var(--color-text-hint);">子供の情報はありません</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <a href="https://sunnyside-d.com/" target="_blank" class="footer-logo">
+                        <img src="/logo.png" alt="SunnySideDesign">
+                    </a>
+                    <span class="footer-copy">&copy; 2024 SunnySideDesign</span>
+                </div>
+                <p class="footer-desc">あなたの人生に、太陽のような安心を。データに基づく精緻なライフプランシミュレーション。</p>
+            </div>
+            <div class="footer-col">
+                <ul class="footer-links">
+                    <li><a href="disclaimer.html" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">免責事項</a></li>
+            <li><a href="privacy.html" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">プライバシーポリシー</a></li>
+            <li><a href="./index.html" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">ホーム（コラム一覧）</a></li>
+            <li><a href="./simulator.html" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">シミュレーター</a></li>
+            <li><a href="./guide.html" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">使い方</a></li>
+            <li><a href="./about.html" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">運営者について</a></li>
+        </ul>
+            </div>
+        </div>
+    </footer>
+
+    
+
+    <!-- Simulation Logic -->
+    <script>
+        let myChart = null;
+
+        // 数値を通貨フォーマット（カンマ区切り）にする関数
+        const formatMoney = (num) => Math.round(num).toLocaleString('ja-JP');
+
+        // ==== UI Helpers ====
+        function toggleHousing() {
+            const isBuy = document.querySelector('input[name="housingType"]:checked').value === 'buy';
+            document.getElementById('housingBuyInputs').style.display = isBuy ? 'block' : 'none';
+            document.getElementById('rentLabel').innerText = isBuy ? '購入までの家賃 (万円/月)' : '一生の家賃 (万円/月)';
+        }
+
+        function toggleCar() {
+            const isBuy = document.querySelector('input[name="carOwnership"]:checked').value === 'buy';
+            document.getElementById('carBuyInputs').style.display = isBuy ? 'flex' : 'none';
+        }
+
+        const EDU_COSTS = {
+            es: { years: 6, startAge: 6, public: 35, private: 160 },
+            jhs: { years: 3, startAge: 12, public: 50, private: 140 },
+            hs: { years: 3, startAge: 15, public: 50, private: 105 },
+            uni: { 
+                startAge: 18,
+                none: { years: 0, costPerYear: 0, enrollment: 0, text: "なし" },
+                national_arts: { years: 4, costPerYear: 55, enrollment: 30, text: "国公文系(4年)" },
+                national_sci: { years: 4, costPerYear: 55, enrollment: 30, text: "国公理系(4年)" },
+                private_arts: { years: 4, costPerYear: 105, enrollment: 25, text: "私立文系(4年)" },
+                private_sci: { years: 4, costPerYear: 150, enrollment: 25, text: "私立理系(4年)" },
+                private_med: { years: 6, costPerYear: 500, enrollment: 150, text: "私立医歯薬(6年)" }
+            }
+        };
+
+        function createChildHTML(index) {
+            return `
+            <div class="child-entry" style="border: 1px solid var(--color-border); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.75rem; background: var(--color-bg);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; align-items: center;">
+                    <label style="font-weight: 600; font-size: 0.8rem;">子供 <span class="child-index">${index}</span></label>
+                    <button type="button" onclick="this.parentElement.parentElement.remove(); updateChildIndices();" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.75rem;">削除</button>
+                </div>
+                <div class="form-group">
+                    <label>現在の年齢 (歳)</label>
+                    <input type="number" class="form-control child-age" value="0">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <div class="form-group" style="margin-bottom:0;"><label>小学校</label><select class="form-control child-es"><option value="public">公立</option><option value="private">私立</option></select></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>中学校</label><select class="form-control child-jhs"><option value="public">公立</option><option value="private">私立</option></select></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>高校</label><select class="form-control child-hs"><option value="public">公立</option><option value="private">私立</option></select></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>大学</label>
+                        <select class="form-control child-uni">
+                            <option value="none">行かない</option>
+                            <option value="national_arts">国公文系(4年)</option>
+                            <option value="national_sci">国公理系(4年)</option>
+                            <option value="private_arts">私立文系(4年)</option>
+                            <option value="private_sci" selected>私立理系(4年)</option>
+                            <option value="private_med">私立医歯薬(6年)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function addChild() {
+            const container = document.getElementById('childrenContainer');
+            const count = container.querySelectorAll('.child-entry').length + 1;
+            container.insertAdjacentHTML('beforeend', createChildHTML(count));
+            updateChildIndices();
+        }
+
+        function updateChildIndices() {
+            const entries = document.querySelectorAll('.child-entry');
+            entries.forEach((el, idx) => {
+                el.querySelector('.child-index').innerText = idx + 1;
+            });
+        }
+
+        function createInvestmentHTML(start=30, end=65, tsumitate=5, growth=0, yieldRate=5.0) {
+            return `
+            <div class="invest-entry" style="border: 1px solid var(--color-border); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.75rem; background: var(--color-bg);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; align-items: center;">
+                    <label style="font-weight: 600; font-size: 0.8rem;">投資枠</label>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.75rem;">削除</button>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center;">
+                     <input type="number" class="form-control invest-start" placeholder="開始歳" value="${start}">
+                     <span style="color: var(--color-text-muted);">〜</span>
+                     <input type="number" class="form-control invest-end" placeholder="終了歳" value="${end}">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <div class="form-group" style="margin-bottom:0;"><label>つみたて(万円/月)</label><input type="number" class="form-control invest-tsumitate" value="${tsumitate}"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>成長投資(万円/月)</label><input type="number" class="form-control invest-growth" value="${growth}"></div>
+                </div>
+                <div class="form-group" style="margin-bottom:0;"><label>想定利回り(%)</label><input type="number" class="form-control invest-yield" value="${yieldRate}" step="0.1"></div>
+            </div>`;
+        }
+
+        function addInvestment(start=30, end=65, tsumitate=5, growth=0, yieldRate=4.0) {
+            const container = document.getElementById('investmentsContainer');
+            container.insertAdjacentHTML('beforeend', createInvestmentHTML(start, end, tsumitate, growth, yieldRate));
+        }
+
+        function runSimulation() {
+            // ==========================================
+            // 1. 入力値の取得
+            // ==========================================
+            const currentAge = parseInt(document.getElementById('currentAge').value) || 0;
+            const currentCash = parseFloat(document.getElementById('currentCash').value) || 0;
+            const currentInvest = parseFloat(document.getElementById('currentInvest').value) || 0;
+            const annualIncome = parseFloat(document.getElementById('annualIncome').value) || 0;
+            const salaryIncrease = parseFloat(document.getElementById('salaryIncrease').value) || 0;
+            const sideIncome = parseFloat(document.getElementById('sideIncome').value) || 0;
+            const retirementAge = parseInt(document.getElementById('retirementAge').value) || 65;
+            const retirementAllowance = parseFloat(document.getElementById('retirementAllowance').value) || 0;
+            const retirementIncome = parseFloat(document.getElementById('retirementIncome').value) || 0;
+            const retirementExpense = parseFloat(document.getElementById('retirementExpense').value) || 0;
+            const annualExpense = parseFloat(document.getElementById('annualExpense').value) || 0;
+            const annualSpecialExpense = parseFloat(document.getElementById('annualSpecialExpense').value) || 0;
+            
+            const currentDebtAmount = parseFloat(document.getElementById('currentDebtAmount').value) || 0;
+            const currentDebtYears = parseInt(document.getElementById('currentDebtYears').value) || 0;
+            const currentDebtInterest = parseFloat(document.getElementById('currentDebtInterest').value) || 0;
+
+            const housingType = document.querySelector('input[name="housingType"]:checked').value;
+            const houseAge = parseInt(document.getElementById('houseAge').value) || 0;
+            const houseBudget = parseFloat(document.getElementById('houseBudget').value) || 0;
+            const houseDownPayment = parseFloat(document.getElementById('houseDownPayment').value) || 0;
+            const houseYears = parseInt(document.getElementById('houseYears').value) || 0;
+            const houseInterest = parseFloat(document.getElementById('houseInterest').value) || 0;
+            const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 0;
+
+            const carOwnership = document.querySelector('input[name="carOwnership"]:checked').value;
+            const carAge = parseInt(document.getElementById('carAge').value) || 0;
+            const carBudget = parseFloat(document.getElementById('carBudget').value) || 0;
+            const carCycle = parseInt(document.getElementById('carCycle').value) || 1; // 0除算防止
+
+            // Education Data Array
+            const children = Array.from(document.querySelectorAll('.child-entry')).map(el => {
+                return {
+                    currentAge: parseInt(el.querySelector('.child-age').value) || 0,
+                    es: el.querySelector('.child-es').value,
+                    jhs: el.querySelector('.child-jhs').value,
+                    hs: el.querySelector('.child-hs').value,
+                    uni: el.querySelector('.child-uni').value
+                };
+            });
+
+            // Investments Data Array
+            const investments = Array.from(document.querySelectorAll('.invest-entry')).map(el => {
+                return {
+                    start: parseInt(el.querySelector('.invest-start').value) || 0,
+                    end: parseInt(el.querySelector('.invest-end').value) || 0,
+                    tsumitate: parseFloat(el.querySelector('.invest-tsumitate').value) || 0,
+                    growth: parseFloat(el.querySelector('.invest-growth').value) || 0,
+                    yieldRate: (parseFloat(el.querySelector('.invest-yield').value) || 0) / 100
+                };
+            });
+
+            const endAge = 90; // シミュレーション終了年齢
+
+            // ==========================================
+            // 2. 状態の初期化
+            // ==========================================
+            let cash = currentCash;
+            let invest = currentInvest;
+            
+            // グラフ用配列
+            const labelsAge = [];
+            const dataCash = [];
+            const dataInvest = [];
+            const dataTotal = [];
+            const dataEvents = [];
+
+            // 統計用変数
+            let totalEduCost = 0;
+            let totalLoanPaid = 0;
+            
+            // 住宅ローン計算（元利均等返済）
+            let monthlyLoanPayment = 0;
+            if (houseBudget > 0 && houseYears > 0) {
+                const principal = houseBudget - houseDownPayment;
+                const r = (houseInterest / 100) / 12; // 月利
+                const n = houseYears * 12; // 支払い回数
+                if (r > 0) {
+                    monthlyLoanPayment = principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+                } else {
+                    monthlyLoanPayment = principal / n;
+                }
+            }
+
+            // 現在の借入れ計算（元利均等返済と仮定）
+            let annualDebtPayment = 0;
+            if (currentDebtAmount > 0 && currentDebtYears > 0) {
+                const r = (currentDebtInterest / 100) / 12; // 月利
+                const n = currentDebtYears * 12; // 支払い回数
+                if (r > 0) {
+                    annualDebtPayment = (currentDebtAmount * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1)) * 12;
+                } else {
+                    annualDebtPayment = (currentDebtAmount / n) * 12;
+                }
+            }
+
+            // アウトプット用 (65歳時点)
+            let cashAt65 = 0;
+            let investAt65 = 0;
+
+            // ==========================================
+            // 3. シミュレーションループ作成
+            // ==========================================
+            for (let age = currentAge; age <= endAge; age++) {
+                
+                const yearsPassed = age - currentAge;
+                let currentEvents = [];
+
+                // --- 収入と基本生活費 ---
+                // 昇給を反映（退職まで）
+                const yearsForSalary = Math.max(0, Math.min(retirementAge - 1 - currentAge, yearsPassed));
+                const dynamicAnnualIncome = annualIncome * Math.pow(1 + salaryIncrease / 100, yearsForSalary);
+
+                // 退職年齢以降は退職後収入（年金等）を適用
+                const currentIncome = age >= retirementAge ? retirementIncome : dynamicAnnualIncome; 
+                cash += currentIncome;
+                
+                // 退職金設定
+                if (age === retirementAge && retirementAllowance > 0) {
+                    cash += retirementAllowance;
+                    currentEvents.push("退職・退職金受取");
+                } else if (age === retirementAge) {
+                    currentEvents.push("退職");
+                }
+
+                // 副収入
+                if (age < retirementAge) {
+                    cash += sideIncome;
+                }
+
+                // 生活費の適用
+                const currentAnnualExpense = age >= retirementAge ? retirementExpense : annualExpense;
+                cash -= currentAnnualExpense;
+
+                cash -= annualSpecialExpense;
+
+                // --- 現在の借入れ返済 ---
+                if (yearsPassed < currentDebtYears && currentDebtAmount > 0) {
+                    cash -= annualDebtPayment;
+                    if (yearsPassed === currentDebtYears - 1) {
+                        currentEvents.push("現在の借入れ完済");
+                    }
+                }
+
+                // --- 住宅費用 ---
+                if (housingType === 'buy') {
+                    if (age < houseAge) {
+                        const annualRent = monthlyRent * 12;
+                        cash -= annualRent;
+                        totalLoanPaid += annualRent;
+                    }
+                    if (age === houseAge && houseBudget > 0) {
+                        cash -= houseDownPayment;
+                        currentEvents.push("住宅購入(頭金支払)");
+                    }
+                    if (age >= houseAge && age < houseAge + houseYears && houseBudget > 0) {
+                        const annualLoan = monthlyLoanPayment * 12;
+                        cash -= annualLoan;
+                        totalLoanPaid += annualLoan;
+                    }
+                    if (age === houseAge + houseYears - 1 && houseBudget > 0) {
+                        currentEvents.push("住宅ローン完済");
+                    }
+                } else if (housingType === 'rent') {
+                    const annualRent = monthlyRent * 12;
+                    cash -= annualRent;
+                    totalLoanPaid += annualRent;
+                }
+
+                // --- 教育費 ---
+                children.forEach((child, idx) => {
+                    const childAgeNow = child.currentAge + (age - currentAge);
+                    let annualEduCost = 0;
+                    
+                    if (childAgeNow === EDU_COSTS.es.startAge) {
+                        currentEvents.push(`第${idx+1}子 小学校入学`);
+                    } else if (childAgeNow === EDU_COSTS.jhs.startAge) {
+                        currentEvents.push(`第${idx+1}子 中学校入学`);
+                    } else if (childAgeNow === EDU_COSTS.hs.startAge) {
+                        currentEvents.push(`第${idx+1}子 高校入学`);
+                    }
+                    
+                    if (childAgeNow >= EDU_COSTS.es.startAge && childAgeNow < EDU_COSTS.es.startAge + EDU_COSTS.es.years) {
+                        annualEduCost = EDU_COSTS.es[child.es];
+                    } else if (childAgeNow >= EDU_COSTS.jhs.startAge && childAgeNow < EDU_COSTS.jhs.startAge + EDU_COSTS.jhs.years) {
+                        annualEduCost = EDU_COSTS.jhs[child.jhs];
+                    } else if (childAgeNow >= EDU_COSTS.hs.startAge && childAgeNow < EDU_COSTS.hs.startAge + EDU_COSTS.hs.years) {
+                        annualEduCost = EDU_COSTS.hs[child.hs];
+                    } else if (child.uni !== 'none') {
+                        const uniData = EDU_COSTS.uni[child.uni];
+                        if (childAgeNow === EDU_COSTS.uni.startAge) {
+                            annualEduCost += uniData.enrollment; // 入学年に入学金を合算
+                            currentEvents.push(`第${idx+1}子 大学入学`);
+                        }
+                        if (childAgeNow >= EDU_COSTS.uni.startAge && childAgeNow < EDU_COSTS.uni.startAge + uniData.years) {
+                            annualEduCost += uniData.costPerYear;
+                        }
+                    }
+                    
+                    cash -= annualEduCost;
+                    totalEduCost += annualEduCost;
+                });
+
+                // --- 自動車買替 ---
+                if (carOwnership === 'buy' && age >= carAge && carBudget > 0) {
+                    if ((age - carAge) % carCycle === 0) {
+                        cash -= carBudget;
+                        currentEvents.push("自動車購入・買替");
+                    }
+                }
+
+                // --- 投資 ---
+                let currentMonthlyInvest = 0;
+                let activeYieldRates = [];
+                let isInvestStart = false;
+                investments.forEach((inv, idx) => {
+                    if (age >= inv.start && age <= inv.end) {
+                        currentMonthlyInvest += inv.tsumitate + inv.growth;
+                        activeYieldRates.push(inv.yieldRate);
+                    }
+                    if (age === inv.start) {
+                        isInvestStart = true;
+                    }
+                });
+                if (isInvestStart && currentMonthlyInvest > 0) {
+                    currentEvents.push("投資開始");
+                }
+                
+                // Average yield for the period if multiple, else 0
+                const currentYield = activeYieldRates.length > 0 
+                    ? activeYieldRates.reduce((a,b)=>a+b,0) / activeYieldRates.length 
+                    : 0;
+
+                const annualInvest = currentMonthlyInvest * 12;
+                
+                // 投資額をキャッシュから引いて、投資元本に追加
+                cash -= annualInvest;
+                invest += annualInvest;
+                
+                // 運用益の計算（年複利換算）
+                invest *= (1 + currentYield);
+
+                // --- データの保存 ---
+                labelsAge.push(`${age}歳`);
+                // プロットしやすいように負の現金はそのまま許容（グラフが下に伸びる）
+                dataCash.push(Math.round(cash));
+                dataInvest.push(Math.round(invest));
+                dataTotal.push(Math.round(cash + invest));
+                dataEvents.push(currentEvents.join(" / "));
+
+                // 65歳時点スナップショット
+                if (age === 65) {
+                    cashAt65 = Math.round(cash);
+                    investAt65 = Math.round(invest);
+                }
+            }
+
+            // もしシミュレーションが65歳以降から始まった場合用のフォールバック
+            if (currentAge > 65) {
+                cashAt65 = dataCash[0];
+                investAt65 = dataInvest[0];
+            }
+
+            // ==========================================
+            // 4. 結果のUI反映
+            // ==========================================
+            document.getElementById('resTotal65').innerText = `${formatMoney(cashAt65 + investAt65)} 万円`;
+            document.getElementById('resCash65').innerText = formatMoney(cashAt65);
+            document.getElementById('resInvest65').innerText = formatMoney(investAt65);
+
+            document.getElementById('resEduTotal').innerText = `${formatMoney(totalEduCost)} 万円`;
+            document.getElementById('resLoanTotal').innerText = `${formatMoney(totalLoanPaid)} 万円`;
+            
+            if (housingType === 'buy') {
+                document.querySelector('#housingKpiCard h3').innerText = "🏠 生涯の住宅関連支出";
+                document.getElementById('resLoanSub').innerText = "※頭金と購入前家賃を含む";
+                // 頭金を別途加算する場合はここで対応する
+                totalLoanPaid += houseDownPayment;
+                document.getElementById('resLoanTotal').innerText = `${formatMoney(totalLoanPaid)} 万円`;
+            } else {
+                document.querySelector('#housingKpiCard h3').innerText = "🏠 生涯の家賃支払総額";
+                document.getElementById('resLoanSub').innerText = "※現在から終了年齢まで";
+            }
+            
+            // Education Breakdown Setup
+            let eduLogHTML = '';
+            children.forEach((child, idx) => {
+                let currentCost = 0;
+                currentCost += EDU_COSTS.es[child.es] * EDU_COSTS.es.years;
+                currentCost += EDU_COSTS.jhs[child.jhs] * EDU_COSTS.jhs.years;
+                currentCost += EDU_COSTS.hs[child.hs] * EDU_COSTS.hs.years;
+                if (child.uni !== 'none') {
+                    currentCost += (EDU_COSTS.uni[child.uni].costPerYear * EDU_COSTS.uni[child.uni].years) + EDU_COSTS.uni[child.uni].enrollment;
+                }
+                
+                const uniStr = EDU_COSTS.uni[child.uni].text;
+                const pathStr = `小:${child.es === 'public' ? '公' : '私'} / 中:${child.jhs === 'public' ? '公' : '私'} / 高:${child.hs === 'public' ? '公' : '私'} / 大:${uniStr}`;
+                eduLogHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;"><span>子供${idx+1} [${pathStr}]</span> <span>${formatMoney(currentCost)}万円</span></div>`;
+            });
+            
+            if (children.length === 0) {
+                eduLogHTML = '<div style="color: var(--color-text-hint);">子供の情報はありません</div>';
+            }
+            
+            // Sub description for Breakdown
+            eduLogHTML += `<div style="font-size:0.75rem; color:var(--color-text-hint); margin-top:0.75rem; border-top:1px dashed var(--color-border); padding-top:0.75rem;">`;
+            eduLogHTML += `※公立小:${EDU_COSTS.es.public}万/年 私立小:${EDU_COSTS.es.private}万/年<br>`;
+            eduLogHTML += `※公立中:${EDU_COSTS.jhs.public}万/年 私立中:${EDU_COSTS.jhs.private}万/年<br>`;
+            eduLogHTML += `※公立高:${EDU_COSTS.hs.public}万/年 私立高:${EDU_COSTS.hs.private}万/年<br>`;
+            eduLogHTML += `※大学は年額＋入学金で算出 (国公:${EDU_COSTS.uni.national_arts.costPerYear}万/年+入学金${EDU_COSTS.uni.national_arts.enrollment}万, 私立文:${EDU_COSTS.uni.private_arts.costPerYear}万/年+入学金${EDU_COSTS.uni.private_arts.enrollment}万, 私立理:${EDU_COSTS.uni.private_sci.costPerYear}万/年+入学金${EDU_COSTS.uni.private_sci.enrollment}万, 私立医:${EDU_COSTS.uni.private_med.costPerYear}万/年+入学金${EDU_COSTS.uni.private_med.enrollment}万)`;
+            eduLogHTML += `</div>`;
+            
+            document.getElementById('eduBreakdown').innerHTML = eduLogHTML;
+
+            drawChart(labelsAge, dataCash, dataInvest, dataTotal, dataEvents);
+            updatePrintSummary();
+        }
+
+        // ==========================================
+        // 5. Chart.js 描画プロセス
+        // ==========================================
+        function drawChart(labels, cashData, investData, totalData, eventsData) {
+            const ctx = document.getElementById('assetChart').getContext('2d');
+            
+            // 既存のチャートがあれば破棄
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '総資産 (万円)',
+                            data: totalData,
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            borderWidth: 3,
+                            // イベントがある年だけポイントを強調する
+                            pointRadius: context => {
+                                const index = context.dataIndex;
+                                return (eventsData && eventsData[index]) ? 6 : 0;
+                            },
+                            pointBackgroundColor: '#f59e0b',
+                            pointHoverRadius: 8,
+                            tension: 0.1,
+                            stacked: false // 総資産線はスタックさせない
+                        },
+                        {
+                            label: '投資資産 (万円)',
+                            data: investData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.4)',
+                            fill: true,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            tension: 0.1,
+                            stacked: true
+                        },
+                        {
+                            label: '現金残高 (万円)',
+                            data: cashData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.4)',
+                            fill: true, 
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            tension: 0.1,
+                            stacked: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: "'Google Sans', 'Noto Sans JP', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += formatMoney(context.parsed.y) + ' 万円';
+                                    }
+                                    return label;
+                                },
+                                afterBody: function(context) {
+                                    if (eventsData) {
+                                        const index = context[0].dataIndex;
+                                        const eventText = eventsData[index];
+                                        if (eventText) {
+                                            return "\n【主なイベント】\n" + eventText.split(" / ").join("\n");
+                                        }
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '金額 (万円)'
+                            },
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // 6. レポート印刷用のサマリ生成
+        // ==========================================
+        function updatePrintSummary() {
+            const $ = id => document.getElementById(id) ? document.getElementById(id).value : '0';
+            const housingType = document.querySelector('input[name="housingType"]:checked').value === 'buy' ? '購入' : '賃貸';
+            let housingInfo = housingType === '賃貸' 
+                ? `一生の家賃: ${$('monthlyRent')}万円/月` 
+                : `購入前家賃: ${$('monthlyRent')}万円/月 / 予算: ${$('houseBudget')}万円 (頭金: ${$('houseDownPayment')}万円 / ${$('houseYears')}年ローン / 金利 ${$('houseInterest')}%) / 購入年齢: ${$('houseAge')}歳`;
+                
+            const carOwnership = document.querySelector('input[name="carOwnership"]:checked').value === 'buy' ? '購入する' : '買わない';
+            let carInfo = carOwnership === '買わない' 
+                ? `なし`
+                : `予算: ${$('carBudget')}万円 / 初回年齢: ${$('carAge')}歳 / 買替: ${$('carCycle')}年毎`;
+                
+            const debtInfo = parseFloat($('currentDebtAmount')) > 0 
+                ? `${$('currentDebtAmount')}万円 (残期間: ${$('currentDebtYears')}年 / 金利: ${$('currentDebtInterest')}%)` 
+                : 'なし';
+
+            const html = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; font-size: 0.9rem;">
+                    <table class="print-table">
+                        <tr><th>現在年齢</th><td>${$('currentAge')}歳</td></tr>
+                        <tr><th>現在の貯金残高</th><td>${$('currentCash')}万円</td></tr>
+                        <tr><th>現在の投資残高</th><td>${$('currentInvest')}万円</td></tr>
+                        <tr><th>現在の借入残高</th><td>${debtInfo}</td></tr>
+                        <tr><th>現在世帯年収</th><td>${$('annualIncome')}万円</td></tr>
+                        <tr><th>昇給見込み</th><td>年 ${$('salaryIncrease')}%</td></tr>
+                        <tr><th>退職年齢</th><td>${$('retirementAge')}歳</td></tr>
+                        <tr><th>退職金</th><td>${$('retirementAllowance')}万円</td></tr>
+                    </table>
+                    <table class="print-table">
+                        <tr><th>基本生活費</th><td>${$('annualExpense')}万円/年</td></tr>
+                        <tr><th>住宅プラン</th><td>${housingType} (${housingInfo})</td></tr>
+                        <tr><th>自動車プラン</th><td>${carInfo}</td></tr>
+                        <tr><th>退職後収入</th><td>年金等: ${$('retirementIncome')}万円/年</td></tr>
+                        <tr><th>退職後生活費</th><td>${$('retirementExpense')}万円/年</td></tr>
+                        <tr><th>年間特別費</th><td>${$('annualSpecialExpense')}万円/年</td></tr>
+                    </table>
+                </div>
+            `;
+            document.getElementById('printConditionContent').innerHTML = html;
+        }
+
+        // ==== Modal Behaviors ====
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        
+        function closeModalOnBgClick(event, id) {
+            if (event.target.id === id) {
+                closeModal(id);
+            }
+        }
+
+        // 初期化時に1回シミュレーションを実行
+        window.addEventListener('DOMContentLoaded', () => {
+            addChild();       // setup initial 1 child
+            addInvestment();  // setup initial investment period
+            runSimulation();  // initial simulation run
+        });
+    </script>
+</body>
+</html>
